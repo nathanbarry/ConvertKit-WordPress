@@ -161,7 +161,7 @@ class ConvertKit_Forminator {
 				}
 
 				// Add subscriber to form.
-				return $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+				return $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'], $this->get_referrer_url() );
 
 			/**
 			 * Sequence
@@ -194,6 +194,36 @@ class ConvertKit_Forminator {
 				return $api->tag_subscriber( $resource_id, $subscriber['subscriber']['id'] );
 
 		}
+
+	}
+
+	/**
+	 * Gets the referrer URL to send to the `form_subscribe` API method.
+	 *
+	 * Falls back to the action's AJAX URL if the Post ID the form was
+	 * embedded in cannot be determined.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @return  string
+	 */
+	private function get_referrer_url() {
+
+		// If the request includes the HTTP referrer, return that URL
+		// as it will include any UTM parameters.
+		if ( array_key_exists( '_wp_http_referer', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			// referrer is a relative path, so use home_url() to return a fully qualified URL.
+			return esc_url( home_url( $_REQUEST['_wp_http_referer'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		// If the request includes the current_url, return that URL.
+		// It won't include any UTM parameters, but is still an accurate URL.
+		if ( array_key_exists( 'current_url', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return esc_url( $_REQUEST['current_url'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		// Return the AJAX URL.
+		return home_url( add_query_arg( null, null ) );
 
 	}
 
