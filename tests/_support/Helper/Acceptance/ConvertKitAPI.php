@@ -69,6 +69,46 @@ class ConvertKitAPI extends \Codeception\Module
 	}
 
 	/**
+	 * Check the given subscriber ID has been assigned to the given form ID.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $subscriberID  Subscriber ID.
+	 * @param   int              $formID        Form ID.
+	 * @param   string           $referrer      Referrer.
+	 */
+	public function apiCheckSubscriberHasForm($I, $subscriberID, $formID, $referrer = false)
+	{
+		// Run request.
+		$results = $this->apiRequest(
+			'forms/' . $formID . '/subscribers',
+			'GET',
+			[
+				// Check all subscriber states.
+				'status' => 'all',
+			]
+		);
+
+		// Iterate through subscribers.
+		$subscriberHasForm = false;
+		foreach ($results['subscribers'] as $subscriber) {
+			if ($subscriber['id'] === $subscriberID) {
+				$subscriberHasForm = true;
+				break;
+			}
+		}
+
+		// Assert if the subscriber has the form.
+		$this->assertTrue($subscriberHasForm);
+
+		// If a referrer is specified, assert it matches the subscriber's referrer now.
+		if ($referrer) {
+			$I->assertEquals($subscriber['referrer'], $referrer);
+		}
+	}
+
+	/**
 	 * Check the given subscriber ID has been assigned to the given sequence ID.
 	 *
 	 * @since   2.5.2
