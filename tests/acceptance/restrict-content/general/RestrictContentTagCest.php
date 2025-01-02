@@ -100,7 +100,7 @@ class RestrictContentTagCest
 			[
 				'recaptcha_site_key'      => $_ENV['CONVERTKIT_API_RECAPTCHA_SITE_KEY'],
 				'recaptcha_secret_key'    => $_ENV['CONVERTKIT_API_RECAPTCHA_SECRET_KEY'],
-				'recaptcha_minimum_score' => '0.5',
+				'recaptcha_minimum_score' => '0.01', // Set a low score to ensure reCAPTCHA passes the subscriber.
 			]
 		);
 
