@@ -163,7 +163,7 @@ class ConvertKit_ContactForm7 {
 				}
 
 				// Add subscriber to form.
-				return $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+				return $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'], $this->get_referrer_url() );
 
 			/**
 			 * Sequence
@@ -196,6 +196,29 @@ class ConvertKit_ContactForm7 {
 				return $api->tag_subscriber( $resource_id, $subscriber['subscriber']['id'] );
 
 		}
+
+	}
+
+	/**
+	 * Gets the referrer URL to send to the `form_subscribe` API method.
+	 *
+	 * Falls back to the action's AJAX URL if the Post ID the form was
+	 * embedded in cannot be determined.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @return  string
+	 */
+	private function get_referrer_url() {
+
+		// If the request includes the Post ID the form was embedded in,
+		// return that URL.
+		if ( array_key_exists( '_wpcf7_container_post', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return get_permalink( absint( $_REQUEST['_wpcf7_container_post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		// Return the AJAX URL.
+		return home_url( add_query_arg( null, null ) );
 
 	}
 

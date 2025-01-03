@@ -4,7 +4,7 @@
     "type": "project",
     "license": "GPLv3",
     "require": {
-        "convertkit/convertkit-wordpress-libraries": "2.0.5"
+        "convertkit/convertkit-wordpress-libraries": "dev-add-form-referrer-support"
     },
     "require-dev": {
         "lucatume/wp-browser": "<3.5",

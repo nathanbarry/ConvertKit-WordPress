@@ -62,7 +62,15 @@ class ContactForm7FormCest
 		);
 
 		// Confirm that the email address was added to ConvertKit.
-		$I->apiCheckSubscriberExists($I, $emailAddress);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress);
+
+		// Check that the subscriber has the expected form and referrer value set.
+		$I->apiCheckSubscriberHasForm(
+			$I,
+			$subscriberID,
+			$_ENV['CONVERTKIT_API_THIRD_PARTY_INTEGRATIONS_FORM_ID'],
+			$_ENV['TEST_SITE_WP_URL'] . $I->grabFromCurrentUrl()
+		);
 	}
 
 	/**
