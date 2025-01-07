@@ -1,7 +1,8 @@
 <?php
 /**
  * Tests Refresh Resource buttons, which are displayed next to settings fields
- * across Page/Post editing, Bulk/Quick edit and Category editing.
+ * across Page/Post editing, Bulk/Quick edit, Category editing, shortcodes
+ * and blocks.
  *
  * @since   1.9.8.0
  */
@@ -347,6 +348,173 @@ class RefreshResourcesButtonCest
 		// Change resource to value specified in the .env file, which should now be available.
 		// If the expected dropdown value does not exist in the Select2 field, this will fail the test.
 		$I->fillSelect2Field($I, '#select2-wp-convertkit-form-container', $_ENV['CONVERTKIT_API_FORM_NAME']);
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form block.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormBlock(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				3003590 => [
+					'id'         => 3003590,
+					'name'       => 'Third Party Integrations Form',
+					'created_at' => '2022-02-17T15:05:31.000Z',
+					'type'       => 'embed',
+					'format'     => 'inline',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/71cbcc4042/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/71cbcc4042',
+					'archived'   => false,
+					'uid'        => '71cbcc4042',
+				],
+			]
+		);
+
+		// Add a Page using the Gutenberg editor.
+		$I->addGutenbergPage($I, 'page', 'Kit: Page: Forms: Block: Refresh Button');
+
+		// Add block to Page.
+		$I->addGutenbergBlock(
+			$I,
+			'Kit Form',
+			'convertkit-form'
+		);
+
+		// Click the refresh button.
+		$I->click('div.components-flex-item button.convertkit-block-refresh');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('div.components-flex-item button.convertkit-block-refresh:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('#convertkit_form_form', $_ENV['CONVERTKIT_API_FORM_NAME']);
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewGutenbergPage($I);
+	}
+
+	public function testRefreshResourcesOnFormShortcodeUsingTinyMCE(AcceptanceTester $I)
+	{
+		
+	}
+
+	public function testRefreshResourcesOnFormShortcodeUsingTextEditor(AcceptanceTester $I)
+	{
+		
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form Trigger block.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormTriggerBlock(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached non-inline Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				2780979 => [
+					'id'         => 2780979,
+					'name'       => 'Slide In Form',
+					'created_at' => '2021-11-17T04:22:24.000Z',
+					'type'       => 'embed',
+					'format'     => 'slide in',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/e0d65bed9d/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/e0d65bed9d',
+					'archived'   => false,
+					'uid'        => 'e0d65bed9d',
+				],
+			]
+		);
+
+		// Add a Page using the Gutenberg editor.
+		$I->addGutenbergPage($I, 'page', 'Kit: Page: Form Trigger: Block: Refresh Button');
+
+		// Add block to Page.
+		$I->addGutenbergBlock(
+			$I,
+			'Kit Form Trigger',
+			'convertkit-formtrigger'
+		);
+
+		// Click the refresh button.
+		$I->click('div.components-flex-item button.convertkit-block-refresh');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('div.components-flex-item button.convertkit-block-refresh:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('#convertkit_formtrigger_form', $_ENV['CONVERTKIT_API_FORM_FORMAT_MODAL_NAME']);
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewGutenbergPage($I);
+	}
+
+/**
+	 * Test that the refresh button for Products works when using the Product block.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnProductBlock(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Product, as if the Products resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_products',
+			[
+				42847 => [
+					'id'        => 42847,
+					'name'      => 'Example Tip Jar',
+					'url'       => 'https://cheerful-architect-3237.kit.com/products/example-tip-jar',
+					'published' => true,
+				],
+			]
+		);
+
+		// Add a Page using the Gutenberg editor.
+		$I->addGutenbergPage($I, 'page', 'Kit: Page: Product: Block: Refresh Button');
+
+		// Add block to Page.
+		$I->addGutenbergBlock(
+			$I,
+			'Kit Product',
+			'convertkit-product'
+		);
+
+		// Click the refresh button.
+		$I->click('div.components-flex-item button.convertkit-block-refresh');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('div.components-flex-item button.convertkit-block-refresh:not(:disabled)');
+
+		// Confirm that the Product option contains all Products by selecting a Product that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('#convertkit_product_product', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewGutenbergPage($I);
 	}
 
 	/**
