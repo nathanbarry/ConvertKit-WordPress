@@ -138,6 +138,7 @@ class ConvertKit_Divi_Module extends ET_Builder_Module {
 				/**
 				 * Select
 				 */
+				case 'resource':
 				case 'select':
 					// For select dropdowns, Divi treats the first <option> as the default. If it's selected,
 					// Divi won't pass the underlying value, resulting in no output.

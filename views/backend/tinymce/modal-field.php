@@ -43,6 +43,7 @@ switch ( $field['type'] ) {
 	/**
 	 * Select
 	 */
+	case 'resource':
 	case 'select':
 		?>
 		<select name="<?php echo esc_attr( $field_name ); ?>"
@@ -62,6 +63,22 @@ switch ( $field['type'] ) {
 			?>
 		</select>
 		<?php
+		// Display a refresh resource button if the field type is resource.
+		if ( $field['type'] === 'resource' ) {
+			$button_title = sprintf(
+				/* translators: Resource Type (Forms, Products, Tags etc). */
+				__( 'Refresh %s from Kit account', 'convertkit' ),
+				$field['resource']
+			);
+			?>
+			<button class="wp-convertkit-refresh-resources button button-secondary hide-if-no-js"
+					title="<?php echo esc_attr( $button_title ); ?>"
+					data-resource="<?php echo esc_attr( $field['resource'] ); ?>"
+					data-field="#tinymce_modal_<?php echo esc_attr( $field_name ); ?>">
+				<span class="dashicons dashicons-update"></span>
+			</button>
+			<?php
+		}
 		break;
 
 	/**

@@ -300,9 +300,10 @@ class ConvertKit_Block_Product extends ConvertKit_Block {
 		// automatically by Gutenberg.
 		return array(
 			'product'                 => array(
-				'label'  => __( 'Product', 'convertkit' ),
-				'type'   => 'select',
-				'values' => $products,
+				'label'    => __( 'Product', 'convertkit' ),
+				'type'     => 'resource',
+				'resource' => 'products',
+				'values'   => $products,
 			),
 			'text'                    => array(
 				'label'       => __( 'Button Text', 'convertkit' ),
