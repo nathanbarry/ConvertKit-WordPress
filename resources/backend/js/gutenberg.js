@@ -366,7 +366,6 @@ function convertKitGutenbergRegisterBlock( block ) {
 			}
 
 			if ( typeof block.gutenberg_preview_render_callback !== 'undefined' ) {
-				console.log( 'custom preview ' + block.name );
 				// Use a custom callback function to render this block's preview in the Gutenberg Editor.
 				// This doesn't affect the output for this block on the frontend site, which will always
 				// use the block's PHP's render() function.
