@@ -99,9 +99,6 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 */
 		const getField = function ( props, field, attribute ) {
 
-			// useState to toggle the refresh button's disabled state.
-			const [ inlineButtonDisabled, setInlineButtonDisabled ] = useState( false );
-
 			// Define some field properties shared across all field types.
 			let fieldProperties = {
 				id:  		'convertkit_' + block.name + '_' + attribute,
@@ -131,16 +128,13 @@ function convertKitGutenbergRegisterBlock( block ) {
 				}
 			};
 
+			let fieldOptions = [];
+
 			// Define additional Field Properties and the Field Element,
 			// depending on the Field Type (select, textarea, text etc).
 			switch ( field.type ) {
-
-				case 'resource':
 				case 'select':
-					
-
 					// Build options for <select> input.
-					let fieldOptions = [];
 					fieldOptions.push(
 						{
 							label: '(None)',
@@ -171,38 +165,64 @@ function convertKitGutenbergRegisterBlock( block ) {
 					fieldProperties.options = fieldOptions;
 
 					// Define select field.
-					let selectField = [
-						el(
-							SelectControl,
-							fieldProperties
-						)
-					];
+					return el(
+						SelectControl,
+						fieldProperties
+					);
+					break;
 
-					// If select field type is for resources (forms, products etc),
-					// include a refresh button in a flex layout.
-					if ( field.type === 'resource' ) {
-						return el(
-							Flex,
+				case 'resource':
+					// Build options for <select> input.
+					fieldOptions.push(
+						{
+							label: '(None)',
+							value: '',
+						}
+					);
+					for ( let value in field.values ) {
+						fieldOptions.push(
 							{
-								align: 'start',
-							},
-							[
-								el(
-									FlexItem,
-									{},
-									selectField
-								),
-								el(
-									FlexItem,
-									{},
-									inlineRefreshButton( props, inlineButtonDisabled, setInlineButtonDisabled, false )
-								)
-							]
+								label: field.values[ value ],
+								value: value
+							}
 						);
 					}
 
-					// Just return the select field element.
-					return selectField;
+					// Sort field's options alphabetically by label.
+					fieldOptions.sort(
+						function ( x, y ) {
+
+							let a = x.label.toUpperCase(),
+							b     = y.label.toUpperCase();
+							return a.localeCompare( b );
+
+						}
+					);
+
+					// Assign options to field.
+					fieldProperties.options = fieldOptions;
+
+					return el(
+						Flex,
+						{
+							align: 'start',
+						},
+						[
+							el(
+								FlexItem,
+								{},
+								el(
+									SelectControl,
+									fieldProperties
+								)
+							),
+							el(
+								FlexItem,
+								{},
+								inlineRefreshButton( props )
+							)
+						]
+					);
 					break;
 
 				case 'toggle':
@@ -542,19 +562,19 @@ function convertKitGutenbergRegisterBlock( block ) {
 
 		}
 
-		const inlineRefreshButton = function( props, buttonDisabled, setButtonDisabled ) {
+		const inlineRefreshButton = function ( props ) {
 
 			return el(
 				Button,
 				{
 					key: props.clientId + '-refresh-button',
 					className: 'button button-secondary convertkit-block-refresh',
-					disabled: buttonDisabled,
+					disabled: false,
 					icon: dashIcon( 'update' ),
 					onClick: function () {
 
 						// Refresh block definitions.
-						refreshBlocksDefinitions( props, setButtonDisabled );
+						refreshBlocksDefinitions( props );
 
 					}
 				}
@@ -636,7 +656,9 @@ function convertKitGutenbergRegisterBlock( block ) {
 			data.append( 'nonce', convertkit_gutenberg.get_blocks_nonce );
 
 			// Disable the button.
-			setButtonDisabled( true );
+			if ( typeof setButtonDisabled !== 'undefined' ) {
+				setButtonDisabled( true );
+			}
 
 			// Send AJAX request.
 			fetch(
@@ -675,7 +697,9 @@ function convertKitGutenbergRegisterBlock( block ) {
 					);
 
 					// Enable refresh button.
-					setButtonDisabled( false );
+					if ( typeof setButtonDisabled !== 'undefined' ) {
+						setButtonDisabled( false );
+					}
 
 				}
 			)
