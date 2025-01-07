@@ -19,8 +19,6 @@ document.addEventListener(
 				// Check if a cancel button was clicked.
 				if ( e.target.matches( '#convertkit-modal-body div.mce-cancel button, #convertkit-modal-body div.mce-cancel button *, #convertkit-quicktags-modal .media-toolbar .media-toolbar-secondary button.cancel' ) ) {
 
-					console.log( 'cancel' );
-
 					// TinyMCE.
 					if ( typeof tinyMCE !== 'undefined' && tinyMCE.activeEditor && ! tinyMCE.activeEditor.isHidden() ) {
 						tinymce.activeEditor.windowManager.close();
@@ -63,7 +61,7 @@ document.addEventListener(
 						function ( element ) {
 							// Skip if no data-shortcode attribute.
 							if ( ! element.dataset.shortcode ) {
-									return;
+								return;
 							}
 
 							let val = '';

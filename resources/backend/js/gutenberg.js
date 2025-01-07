@@ -133,6 +133,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 			// Define additional Field Properties and the Field Element,
 			// depending on the Field Type (select, textarea, text etc).
 			switch ( field.type ) {
+
 				case 'select':
 					// Build options for <select> input.
 					fieldOptions.push(
@@ -164,7 +165,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 					// Assign options to field.
 					fieldProperties.options = fieldOptions;
 
-					// Define select field.
+					// Return field element.
 					return el(
 						SelectControl,
 						fieldProperties
@@ -562,6 +563,14 @@ function convertKitGutenbergRegisterBlock( block ) {
 
 		}
 
+		/**
+		 * Returns an inline refresh button, used to refresh a block's resources.
+		 *
+		 * @since 	2.7.1
+		 *
+		 * @param 	object 	props 				Block properties.
+		 * @return 	object 						Button.
+		 */
 		const inlineRefreshButton = function ( props ) {
 
 			return el(
