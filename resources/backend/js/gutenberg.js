@@ -52,7 +52,6 @@ function convertKitGutenbergRegisterBlock( block ) {
 			ToggleControl,
 			Flex,
 			FlexItem,
-			FlexBlock,
 			Panel,
 			PanelBody,
 			PanelRow
@@ -98,7 +97,10 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 * @param 	string 	attribute 		Attribute name to store the field's data in.
 		 * @return  array                   Field element
 		 */
-		const getField = function ( props, field, attribute, buttonDisabled, setButtonDisabled ) {
+		const getField = function ( props, field, attribute ) {
+
+			// useState to toggle the refresh button's disabled state.
+			const [ inlineButtonDisabled, setInlineButtonDisabled ] = useState( false );
 
 			// Define some field properties shared across all field types.
 			let fieldProperties = {
@@ -135,6 +137,8 @@ function convertKitGutenbergRegisterBlock( block ) {
 
 				case 'resource':
 				case 'select':
+					
+
 					// Build options for <select> input.
 					let fieldOptions = [];
 					fieldOptions.push(
@@ -191,7 +195,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 								el(
 									FlexItem,
 									{},
-									refreshButton( props, buttonDisabled, setButtonDisabled, false )
+									inlineRefreshButton( props, inlineButtonDisabled, setInlineButtonDisabled, false )
 								)
 							]
 						);
@@ -247,7 +251,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 * @param   string  panel 	Panel name.
 		 * @return  array           Panel rows
 		 */
-		const getPanelRows = function ( props, panel, buttonDisabled, setButtonDisabled ) {
+		const getPanelRows = function ( props, panel ) {
 
 			// Build Inspector Control Panel Rows, one for each Field.
 			let rows = [];
@@ -268,7 +272,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 						{
 							key: attribute
 						},
-						getField( props, field, attribute, buttonDisabled, setButtonDisabled )
+						getField( props, field, attribute )
 					)
 				);
 			}
@@ -286,14 +290,14 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 * @param   object  props 	Block formatter properties.
 		 * @return 	array 			Block sidebar panels.
 		 */
-		const getPanels = function ( props, buttonDisabled, setButtonDisabled ) {
+		const getPanels = function ( props ) {
 
 			let panels      = [],
 				initialOpen = true;
 
 			// Build Inspector Control Panels.
 			for ( const panel in block.panels ) {
-				let panelRows = getPanelRows( props, panel, buttonDisabled, setButtonDisabled );
+				let panelRows = getPanelRows( props, panel );
 
 				// If no panel rows exist (e.g. this is a shortcode only panel,
 				// for styles, which Gutenberg registers in its own styles tab),
@@ -333,9 +337,6 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 */
 		const editBlock = function ( props ) {
 
-			// useState to toggle the refresh button's disabled state.
-			const [ buttonDisabled, setButtonDisabled ] = useState( false );
-
 			// If requesting an example of how this block looks (which is requested
 			// when the user adds a new block and hovers over this block's icon),
 			// show the preview image.
@@ -353,7 +354,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 			}
 
 			// Build Inspector Control Panels, which will appear in the Sidebar when editing the Block.
-			let panels = getPanels( props, buttonDisabled, setButtonDisabled );
+			let panels = getPanels( props );
 
 			// Generate Block Preview.
 			let preview = '';
@@ -361,10 +362,11 @@ function convertKitGutenbergRegisterBlock( block ) {
 			// If no API Key has been defined in the Plugin, or no resources exist in ConvertKit
 			// for this block, show a message in the block to tell the user what to do.
 			if ( ! block.has_access_token || ! block.has_resources ) {
-				return displayNoticeWithLink( props, buttonDisabled, setButtonDisabled );
+				return displayNoticeWithLink( props );
 			}
 
 			if ( typeof block.gutenberg_preview_render_callback !== 'undefined' ) {
+				console.log( 'custom preview ' + block.name );
 				// Use a custom callback function to render this block's preview in the Gutenberg Editor.
 				// This doesn't affect the output for this block on the frontend site, which will always
 				// use the block's PHP's render() function.
@@ -396,12 +398,13 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 *
 		 * @since 	2.2.5
 		 *
-		 * @param   object  props   			Block properties.
-		 * @param 	bool 	buttonDisabled 		Whether the refresh button is disabled (true) or enabled (false)/
-		 * @param 	object 	setButtonDisabled 	Function to enable or disable the refresh button.
-		 * @return  object          			Notice.
+		 * @param   object  props   Block properties.
+		 * @return  object          Notice.
 		 */
-		const displayNoticeWithLink = function ( props, buttonDisabled, setButtonDisabled ) {
+		const displayNoticeWithLink = function ( props ) {
+
+			// useState to toggle the refresh button's disabled state.
+			const [ buttonDisabled, setButtonDisabled ] = useState( false );
 
 			// Holds the array of elements to display in the notice component.
 			let elements;
@@ -411,14 +414,14 @@ function convertKitGutenbergRegisterBlock( block ) {
 				// Refresh button disabled; display a spinner and the button.
 				elements = [
 					spinner( props ),
-					refreshButton( props, buttonDisabled, setButtonDisabled, true )
+					refreshButton( props, buttonDisabled, setButtonDisabled )
 				];
 			} else {
 				// Refresh button enabled; display the notice, link and button.
 				elements = [
 					( ! block.has_access_token ? block.no_access_token.notice : block.no_resources.notice ),
 					noticeLink( props, setButtonDisabled ),
-					refreshButton( props, buttonDisabled, setButtonDisabled, true )
+					refreshButton( props, buttonDisabled, setButtonDisabled )
 				];
 			}
 
@@ -517,10 +520,9 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 * @param 	object 	props 				Block properties.
 		 * @param 	bool 	buttonDisabled 		Whether the refresh button is disabled (true) or enabled (false)/
 		 * @param 	object 	setButtonDisabled 	Function to enable or disable the refresh button.
-		 * @param 	bool 	displayText 		Display text in button.
 		 * @return 	object 						Button.
 		 */
-		const refreshButton = function ( props, buttonDisabled, setButtonDisabled, displayText ) {
+		const refreshButton = function ( props, buttonDisabled, setButtonDisabled ) {
 
 			return el(
 				Button,
@@ -528,7 +530,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 					key: props.clientId + '-refresh-button',
 					className: 'button button-secondary convertkit-block-refresh',
 					disabled: buttonDisabled,
-					text: ( displayText === true ? 'Refresh' : '' ),
+					text: 'Refresh',
 					icon: dashIcon( 'update' ),
 					onClick: function () {
 
@@ -537,7 +539,27 @@ function convertKitGutenbergRegisterBlock( block ) {
 
 					}
 				}
-			)
+			);
+
+		}
+
+		const inlineRefreshButton = function( props, buttonDisabled, setButtonDisabled ) {
+
+			return el(
+				Button,
+				{
+					key: props.clientId + '-refresh-button',
+					className: 'button button-secondary convertkit-block-refresh',
+					disabled: buttonDisabled,
+					icon: dashIcon( 'update' ),
+					onClick: function () {
+
+						// Refresh block definitions.
+						refreshBlocksDefinitions( props, setButtonDisabled );
+
+					}
+				}
+			);
 
 		}
 
