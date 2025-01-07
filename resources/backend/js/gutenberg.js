@@ -50,6 +50,9 @@ function convertKitGutenbergRegisterBlock( block ) {
 			TextControl,
 			SelectControl,
 			ToggleControl,
+			Flex,
+			FlexItem,
+			FlexBlock,
 			Panel,
 			PanelBody,
 			PanelRow
@@ -172,12 +175,29 @@ function convertKitGutenbergRegisterBlock( block ) {
 					];
 
 					// If select field type is for resources (forms, products etc),
-					// include a refresh button.
+					// include a refresh button in a flex layout.
 					if ( field.type === 'resource' ) {
-						selectField.push( refreshButton( props, buttonDisabled, setButtonDisabled ) );
+						return el(
+							Flex,
+							{
+								align: 'start',
+							},
+							[
+								el(
+									FlexItem,
+									{},
+									selectField
+								),
+								el(
+									FlexItem,
+									{},
+									refreshButton( props, buttonDisabled, setButtonDisabled, false )
+								)
+							]
+						);
 					}
 
-					// Return field element.
+					// Just return the select field element.
 					return selectField;
 					break;
 
@@ -313,6 +333,9 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 */
 		const editBlock = function ( props ) {
 
+			// useState to toggle the refresh button's disabled state.
+			const [ buttonDisabled, setButtonDisabled ] = useState( false );
+
 			// If requesting an example of how this block looks (which is requested
 			// when the user adds a new block and hovers over this block's icon),
 			// show the preview image.
@@ -328,9 +351,6 @@ function convertKitGutenbergRegisterBlock( block ) {
 					)
 				);
 			}
-
-			// useState to toggle the refresh button's disabled state.
-			const [ buttonDisabled, setButtonDisabled ] = useState( false );
 
 			// Build Inspector Control Panels, which will appear in the Sidebar when editing the Block.
 			let panels = getPanels( props, buttonDisabled, setButtonDisabled );
@@ -391,14 +411,14 @@ function convertKitGutenbergRegisterBlock( block ) {
 				// Refresh button disabled; display a spinner and the button.
 				elements = [
 					spinner( props ),
-					refreshButton( props, buttonDisabled, setButtonDisabled )
+					refreshButton( props, buttonDisabled, setButtonDisabled, true )
 				];
 			} else {
 				// Refresh button enabled; display the notice, link and button.
 				elements = [
 					( ! block.has_access_token ? block.no_access_token.notice : block.no_resources.notice ),
 					noticeLink( props, setButtonDisabled ),
-					refreshButton( props, buttonDisabled, setButtonDisabled )
+					refreshButton( props, buttonDisabled, setButtonDisabled, true )
 				];
 			}
 
@@ -497,9 +517,10 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 * @param 	object 	props 				Block properties.
 		 * @param 	bool 	buttonDisabled 		Whether the refresh button is disabled (true) or enabled (false)/
 		 * @param 	object 	setButtonDisabled 	Function to enable or disable the refresh button.
+		 * @param 	bool 	displayText 		Display text in button.
 		 * @return 	object 						Button.
 		 */
-		const refreshButton = function ( props, buttonDisabled, setButtonDisabled ) {
+		const refreshButton = function ( props, buttonDisabled, setButtonDisabled, displayText ) {
 
 			return el(
 				Button,
@@ -507,7 +528,7 @@ function convertKitGutenbergRegisterBlock( block ) {
 					key: props.clientId + '-refresh-button',
 					className: 'button button-secondary convertkit-block-refresh',
 					disabled: buttonDisabled,
-					text: 'Refresh',
+					text: ( displayText === true ? 'Refresh' : '' ),
 					icon: dashIcon( 'update' ),
 					onClick: function () {
 

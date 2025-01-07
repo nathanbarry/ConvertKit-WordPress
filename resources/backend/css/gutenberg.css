@@ -1,3 +1,4 @@
+/* Block editor */
 .wp-block .convertkit-no-content {
 	padding: 90px 20px 20px 20px;
 	background: url(../images/kit-logo.svg) 50% 25px no-repeat;
@@ -31,4 +32,14 @@
 .convertkit-popover .components-popover__content {
 	width: 300px;
 	padding: 15px;
+}
+
+/* Sidebar */
+.components-flex-item button.convertkit-block-refresh {
+	margin: 24px 0 0 0;
+	padding: 0;
+	height: 32px;
+}
+.components-flex-item button.convertkit-block-refresh span.dashicons {
+	vertical-align: sub;
 }
