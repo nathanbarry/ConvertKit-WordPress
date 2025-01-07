@@ -782,21 +782,76 @@ class RefreshResourcesButtonCest
 		// Wait for the modal's form to load.
 		$I->waitForElementVisible('#convertkit-modal-body form.convertkit-tinymce-popup');
 
-		// Click the Forms refresh button.
-		$I->click('#convertkit-modal-body-body button.wp-convertkit-refresh-resources[data-resource="forms"]');
+		// Click the Products refresh button.
+		$I->click('#convertkit-modal-body-body button.wp-convertkit-refresh-resources[data-resource="products"]');
 
 		// Wait for button to change its state from disabled.
-		$I->waitForElementVisible('#convertkit-modal-body-body  button.wp-convertkit-refresh-resources[data-resource="forms"]:not(:disabled)');
+		$I->waitForElementVisible('#convertkit-modal-body-body  button.wp-convertkit-refresh-resources[data-resource="products"]:not(:disabled)');
 
-		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// Confirm that the Product option contains all Products by selecting a Product that wasn't in the cache
 		// and was fetched via the API.
-		$I->selectOption('form', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
+		$I->selectOption('product', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
 
 		// Click the Insert button.
 		$I->click('#convertkit-modal-body div.mce-insert button');
 
 		// Confirm the modal closes.
 		$I->waitForElementNotVisible('#convertkit-modal-body');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Products works when using the Product shortcode in the
+	 * Text Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnProductShortcodeUsingTextEditor(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Product, as if the Products resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_products',
+			[
+				42847 => [
+					'id'        => 42847,
+					'name'      => 'Example Tip Jar',
+					'url'       => 'https://cheerful-architect-3237.kit.com/products/example-tip-jar',
+					'published' => true,
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Product: Shortcode: Text Editor: Refresh Button');
+
+		// Open Text Editor shortcode modal.
+		$I->openTextEditorShortcodeModal($I, 'convertkit-product');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-quicktags-modal form.convertkit-tinymce-popup');
+
+		// Click the Products refresh button.
+		$I->click('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="products"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="products"]:not(:disabled)');
+
+		// Confirm that the Product option contains all Products by selecting a Product that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('product', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-quicktags-modal button.button-primary');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-quicktags-modal');
 
 		// Publish and view the Page on the frontend site.
 		$I->publishAndViewClassicEditorPage($I);
