@@ -916,6 +916,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -956,6 +957,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -1004,6 +1006,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -1036,6 +1039,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -1072,6 +1076,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
