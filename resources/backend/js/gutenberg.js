@@ -573,17 +573,33 @@ function convertKitGutenbergRegisterBlock( block ) {
 		 */
 		const inlineRefreshButton = function ( props ) {
 
+			return el( blockInlineRefreshButton, props );
+
+		}
+
+		/**
+		 * Returns a refresh button.
+		 *
+		 * @since 	2.7.1
+		 *
+		 * @param 	object 	props 	Block properties.
+		 * @return 	object 	Button.
+		 */
+		const blockInlineRefreshButton = function ( props ) {
+
+			const [ buttonDisabled, setButtonDisabled ] = useState( false );
+
 			return el(
 				Button,
 				{
 					key: props.clientId + '-refresh-button',
 					className: 'button button-secondary convertkit-block-refresh',
-					disabled: false,
+					disabled: buttonDisabled,
 					icon: dashIcon( 'update' ),
 					onClick: function () {
 
 						// Refresh block definitions.
-						refreshBlocksDefinitions( props );
+						refreshBlocksDefinitions( props, setButtonDisabled );
 
 					}
 				}
