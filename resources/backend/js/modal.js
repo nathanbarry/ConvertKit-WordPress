@@ -18,6 +18,7 @@ document.addEventListener(
 
 				// Check if a cancel button was clicked.
 				if ( e.target.matches( '#convertkit-modal-body div.mce-cancel button, #convertkit-modal-body div.mce-cancel button *, #convertkit-quicktags-modal .media-toolbar .media-toolbar-secondary button.cancel' ) ) {
+
 					// TinyMCE.
 					if ( typeof tinyMCE !== 'undefined' && tinyMCE.activeEditor && ! tinyMCE.activeEditor.isHidden() ) {
 						tinymce.activeEditor.windowManager.close();
@@ -37,9 +38,16 @@ document.addEventListener(
 			function ( e ) {
 
 				// Check if an insert button was clicked.
-				if ( e.target.matches( '#convertkit-modal-body div.mce-insert button, #convertkit-modal-body div.mce-insert button *, #convertkit-quicktags-modal .media-toolbar .media-toolbar-primary button.button-primary' ) ) {
+				if ( e.target.matches( '#convertkit-modal-body div.mce-insert button, #convertkit-modal-body div.mce-insert button *, #convertkit-quicktags-modal .media-toolbar .media-toolbar-primary button.button-primary' ) ||
+					e.target.matches( 'button.wp-convertkit-refresh-resources, span.dashicons-update' ) ) {
+
 					// Prevent default action.
 					e.preventDefault();
+
+					// Don't close the modal if the refresh button was clicked.
+					if ( e.target.matches( 'button.wp-convertkit-refresh-resources, span.dashicons-update' ) ) {
+						return;
+					}
 
 					// Get containing form.
 					const form = document.querySelector( 'form.convertkit-tinymce-popup' );
@@ -53,7 +61,7 @@ document.addEventListener(
 						function ( element ) {
 							// Skip if no data-shortcode attribute.
 							if ( ! element.dataset.shortcode ) {
-									return;
+								return;
 							}
 
 							let val = '';

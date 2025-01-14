@@ -1,7 +1,8 @@
 <?php
 /**
  * Tests Refresh Resource buttons, which are displayed next to settings fields
- * across Page/Post editing, Bulk/Quick edit and Category editing.
+ * across Page/Post editing, Bulk/Quick edit, Category editing, shortcodes
+ * and blocks.
  *
  * @since   1.9.8.0
  */
@@ -350,6 +351,513 @@ class RefreshResourcesButtonCest
 	}
 
 	/**
+	 * Test that the refresh button for Forms works when using the Form block.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormBlock(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				3003590 => [
+					'id'         => 3003590,
+					'name'       => 'Third Party Integrations Form',
+					'created_at' => '2022-02-17T15:05:31.000Z',
+					'type'       => 'embed',
+					'format'     => 'inline',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/71cbcc4042/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/71cbcc4042',
+					'archived'   => false,
+					'uid'        => '71cbcc4042',
+				],
+			]
+		);
+
+		// Add a Page using the Gutenberg editor.
+		$I->addGutenbergPage($I, 'page', 'Kit: Page: Forms: Block: Refresh Button');
+
+		// Add block to Page.
+		$I->addGutenbergBlock(
+			$I,
+			'Kit Form',
+			'convertkit-form'
+		);
+
+		// Click the refresh button.
+		$I->click('div.components-flex-item button.convertkit-block-refresh');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('div.components-flex-item button.convertkit-block-refresh:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('#convertkit_form_form', $_ENV['CONVERTKIT_API_FORM_NAME']);
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewGutenbergPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form shortcode in the
+	 * TinyMCE Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormShortcodeUsingTinyMCE(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				3003590 => [
+					'id'         => 3003590,
+					'name'       => 'Third Party Integrations Form',
+					'created_at' => '2022-02-17T15:05:31.000Z',
+					'type'       => 'embed',
+					'format'     => 'inline',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/71cbcc4042/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/71cbcc4042',
+					'archived'   => false,
+					'uid'        => '71cbcc4042',
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Form: Shortcode: Visual Editor: Refresh Button');
+
+		// Open Visual Editor shortcode modal.
+		$I->openVisualEditorShortcodeModal($I, 'Kit Form');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-modal-body form.convertkit-tinymce-popup');
+
+		// Click the Forms refresh button.
+		$I->click('#convertkit-modal-body-body button.wp-convertkit-refresh-resources[data-resource="forms"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-modal-body-body  button.wp-convertkit-refresh-resources[data-resource="forms"]:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('form', $_ENV['CONVERTKIT_API_FORM_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-modal-body div.mce-insert button');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-modal-body');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form shortcode in the
+	 * Text Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormShortcodeUsingTextEditor(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				3003590 => [
+					'id'         => 3003590,
+					'name'       => 'Third Party Integrations Form',
+					'created_at' => '2022-02-17T15:05:31.000Z',
+					'type'       => 'embed',
+					'format'     => 'inline',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/71cbcc4042/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/71cbcc4042',
+					'archived'   => false,
+					'uid'        => '71cbcc4042',
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Form: Shortcode: Text Editor: Refresh Button');
+
+		// Open Text Editor shortcode modal.
+		$I->openTextEditorShortcodeModal($I, 'convertkit-form');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-quicktags-modal form.convertkit-tinymce-popup');
+
+		// Click the Forms refresh button.
+		$I->click('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="forms"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="forms"]:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('form', $_ENV['CONVERTKIT_API_FORM_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-quicktags-modal button.button-primary');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-quicktags-modal');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form Trigger block.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormTriggerBlock(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached non-inline Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				2780979 => [
+					'id'         => 2780979,
+					'name'       => 'Slide In Form',
+					'created_at' => '2021-11-17T04:22:24.000Z',
+					'type'       => 'embed',
+					'format'     => 'slide in',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/e0d65bed9d/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/e0d65bed9d',
+					'archived'   => false,
+					'uid'        => 'e0d65bed9d',
+				],
+			]
+		);
+
+		// Add a Page using the Gutenberg editor.
+		$I->addGutenbergPage($I, 'page', 'Kit: Page: Form Trigger: Block: Refresh Button');
+
+		// Add block to Page.
+		$I->addGutenbergBlock(
+			$I,
+			'Kit Form Trigger',
+			'convertkit-formtrigger'
+		);
+
+		// Click the refresh button.
+		$I->click('div.components-flex-item button.convertkit-block-refresh');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('div.components-flex-item button.convertkit-block-refresh:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('#convertkit_formtrigger_form', $_ENV['CONVERTKIT_API_FORM_FORMAT_MODAL_NAME']);
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewGutenbergPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form Trigger shortcode in the
+	 * TinyMCE Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormTriggerShortcodeUsingTinyMCE(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached non-inline Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				2780979 => [
+					'id'         => 2780979,
+					'name'       => 'Slide In Form',
+					'created_at' => '2021-11-17T04:22:24.000Z',
+					'type'       => 'embed',
+					'format'     => 'slide in',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/e0d65bed9d/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/e0d65bed9d',
+					'archived'   => false,
+					'uid'        => 'e0d65bed9d',
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Form Trigger: Shortcode: Visual Editor: Refresh Button');
+
+		// Open Visual Editor shortcode modal.
+		$I->openVisualEditorShortcodeModal($I, 'Kit Form Trigger');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-modal-body form.convertkit-tinymce-popup');
+
+		// Click the Forms refresh button.
+		$I->click('#convertkit-modal-body-body button.wp-convertkit-refresh-resources[data-resource="forms"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-modal-body-body  button.wp-convertkit-refresh-resources[data-resource="forms"]:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('form', $_ENV['CONVERTKIT_API_FORM_FORMAT_MODAL_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-modal-body div.mce-insert button');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-modal-body');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Forms works when using the Form Trigger shortcode in the
+	 * Text Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnFormTriggerShortcodeUsingTextEditor(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached non-inline Form, as if the Forms resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_forms',
+			[
+				2780979 => [
+					'id'         => 2780979,
+					'name'       => 'Slide In Form',
+					'created_at' => '2021-11-17T04:22:24.000Z',
+					'type'       => 'embed',
+					'format'     => 'slide in',
+					'embed_js'   => 'https://cheerful-architect-3237.kit.com/e0d65bed9d/index.js',
+					'embed_url'  => 'https://cheerful-architect-3237.kit.com/e0d65bed9d',
+					'archived'   => false,
+					'uid'        => 'e0d65bed9d',
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Form Trigger: Shortcode: Text Editor: Refresh Button');
+
+		// Open Text Editor shortcode modal.
+		$I->openTextEditorShortcodeModal($I, 'convertkit-formtrigger');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-quicktags-modal form.convertkit-tinymce-popup');
+
+		// Click the Forms refresh button.
+		$I->click('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="forms"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="forms"]:not(:disabled)');
+
+		// Confirm that the Form option contains all Forms by selecting a Form that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('form', $_ENV['CONVERTKIT_API_FORM_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-quicktags-modal button.button-primary');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-quicktags-modal');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Products works when using the Product block.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnProductBlock(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Product, as if the Products resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_products',
+			[
+				42847 => [
+					'id'        => 42847,
+					'name'      => 'Example Tip Jar',
+					'url'       => 'https://cheerful-architect-3237.kit.com/products/example-tip-jar',
+					'published' => true,
+				],
+			]
+		);
+
+		// Add a Page using the Gutenberg editor.
+		$I->addGutenbergPage($I, 'page', 'Kit: Page: Product: Block: Refresh Button');
+
+		// Add block to Page.
+		$I->addGutenbergBlock(
+			$I,
+			'Kit Product',
+			'convertkit-product'
+		);
+
+		// Click the refresh button.
+		$I->click('div.components-flex-item button.convertkit-block-refresh');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('div.components-flex-item button.convertkit-block-refresh:not(:disabled)');
+
+		// Confirm that the Product option contains all Products by selecting a Product that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('#convertkit_product_product', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewGutenbergPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Products works when using the Products shortcode in the
+	 * TinyMCE Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnProductShortcodeUsingTinyMCE(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Product, as if the Products resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_products',
+			[
+				42847 => [
+					'id'        => 42847,
+					'name'      => 'Example Tip Jar',
+					'url'       => 'https://cheerful-architect-3237.kit.com/products/example-tip-jar',
+					'published' => true,
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Product: Shortcode: Visual Editor: Refresh Button');
+
+		// Open Visual Editor shortcode modal.
+		$I->openVisualEditorShortcodeModal($I, 'Kit Product');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-modal-body form.convertkit-tinymce-popup');
+
+		// Click the Products refresh button.
+		$I->click('#convertkit-modal-body-body button.wp-convertkit-refresh-resources[data-resource="products"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-modal-body-body  button.wp-convertkit-refresh-resources[data-resource="products"]:not(:disabled)');
+
+		// Confirm that the Product option contains all Products by selecting a Product that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('product', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-modal-body div.mce-insert button');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-modal-body');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
+	 * Test that the refresh button for Products works when using the Product shortcode in the
+	 * Text Editor.
+	 *
+	 * @since   2.7.1
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testRefreshResourcesOnProductShortcodeUsingTextEditor(AcceptanceTester $I)
+	{
+		// Setup ConvertKit Plugin.
+		$I->setupConvertKitPlugin($I);
+
+		// Define one cached Product, as if the Products resource class populated them from the API.
+		$I->haveOptionInDatabase(
+			'convertkit_products',
+			[
+				42847 => [
+					'id'        => 42847,
+					'name'      => 'Example Tip Jar',
+					'url'       => 'https://cheerful-architect-3237.kit.com/products/example-tip-jar',
+					'published' => true,
+				],
+			]
+		);
+
+		// Add a Page using the Classic Editor.
+		$I->addClassicEditorPage($I, 'page', 'Kit: Page: Product: Shortcode: Text Editor: Refresh Button');
+
+		// Open Text Editor shortcode modal.
+		$I->openTextEditorShortcodeModal($I, 'convertkit-product');
+
+		// Wait for the modal's form to load.
+		$I->waitForElementVisible('#convertkit-quicktags-modal form.convertkit-tinymce-popup');
+
+		// Click the Products refresh button.
+		$I->click('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="products"]');
+
+		// Wait for button to change its state from disabled.
+		$I->waitForElementVisible('#convertkit-quicktags-modal button.wp-convertkit-refresh-resources[data-resource="products"]:not(:disabled)');
+
+		// Confirm that the Product option contains all Products by selecting a Product that wasn't in the cache
+		// and was fetched via the API.
+		$I->selectOption('product', $_ENV['CONVERTKIT_API_PRODUCT_NAME']);
+
+		// Click the Insert button.
+		$I->click('#convertkit-quicktags-modal button.button-primary');
+
+		// Confirm the modal closes.
+		$I->waitForElementNotVisible('#convertkit-quicktags-modal');
+
+		// Publish and view the Page on the frontend site.
+		$I->publishAndViewClassicEditorPage($I);
+	}
+
+	/**
 	 * Test that the refresh button triggers an error message when the AJAX request fails,
 	 * or the ConvertKit API returns an error, when adding a Page using the Gutenberg editor.
 	 *
@@ -408,6 +916,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -448,6 +957,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -496,6 +1006,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -528,6 +1039,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');
@@ -564,6 +1076,7 @@ class RefreshResourcesButtonCest
 		$I->see('Kit: The access token is invalid');
 
 		// Confirm that the notice is dismissible.
+		$I->scrollTo('#wpbody');
 		$I->click('div.convertkit-error button.notice-dismiss');
 		$I->wait(1);
 		$I->dontSeeElementInDOM('div.convertkit-error');

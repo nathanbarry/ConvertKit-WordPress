@@ -76,6 +76,9 @@ function convertKitQuickTagRegister( block ) {
 
 					// Listen for color input changes.
 					convertKitColorInputInit();
+
+					// Bind refresh resource event listeners.
+					convertKitRefreshResourcesInitEventListeners();
 				}
 			)
 			.catch(

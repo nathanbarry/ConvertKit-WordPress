@@ -270,7 +270,8 @@ class ConvertKit_Block_Form_Trigger extends ConvertKit_Block {
 		return array(
 			'form'             => array(
 				'label'       => __( 'Form', 'convertkit' ),
-				'type'        => 'select',
+				'type'        => 'resource',
+				'resource'    => 'forms',
 				'values'      => $forms,
 				'description' => __( 'The modal, sticky bar or slide in form to display when the button is pressed. To embed a form, use the Kit Form block instead.', 'convertkit' ),
 			),

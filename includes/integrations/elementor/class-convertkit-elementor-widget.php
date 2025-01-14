@@ -183,6 +183,7 @@ class ConvertKit_Elementor_Widget extends Elementor\Widget_Base {
 			/**
 			 * Select
 			 */
+			case 'resource':
 			case 'select':
 				$control = array_merge(
 					$control,
