@@ -794,7 +794,7 @@ class ConvertKitPlugin extends \Codeception\Module
 
 		// Wait for the refresh button to disappear, confirming that the block refresh completed
 		// and that resources now exist.
-		$I->waitForElementNotVisible('button.convertkit-block-refresh');
+		$I->waitForElementNotVisible('div.convertkit-no-content button.convertkit-block-refresh');
 
 		// Confirm that the block displays the expected message.
 		if ($expectedMessage) {

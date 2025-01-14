@@ -438,7 +438,7 @@ class PageBlockFormTriggerCest
 	 */
 	public function testFormTriggerBlockRefreshButton(AcceptanceTester $I)
 	{
-		// Setup Plugin with ConvertKit Account that has no Broadcasts.
+		// Setup Plugin with ConvertKit Account that has no Forms.
 		$I->setupConvertKitPluginCredentialsNoData($I);
 		$I->setupConvertKitPluginResourcesNoData($I);
 
@@ -454,10 +454,10 @@ class PageBlockFormTriggerCest
 		$I->setupConvertKitPluginResources($I);
 
 		// Click the refresh button.
-		$I->click('button.convertkit-block-refresh');
+		$I->click('div.convertkit-no-content button.convertkit-block-refresh');
 
 		// Wait for the refresh button to disappear, confirming that an API Key and resources now exist.
-		$I->waitForElementNotVisible('button.convertkit-block-refresh');
+		$I->waitForElementNotVisible('div.convertkit-no-content button.convertkit-block-refresh');
 
 		// Confirm that the Form Trigger block displays instructions to the user on how to select a Form.
 		$I->see(

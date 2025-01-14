@@ -131,10 +131,10 @@ class PageBlockBroadcastsCest
 		$I->setupConvertKitPluginResources($I);
 
 		// Click the refresh button.
-		$I->click('button.convertkit-block-refresh');
+		$I->click('div.convertkit-no-content button.convertkit-block-refresh');
 
 		// Wait for the refresh button to disappear, confirming that an API Key and resources now exist.
-		$I->waitForElementNotVisible('button.convertkit-block-refresh');
+		$I->waitForElementNotVisible('div.convertkit-no-content button.convertkit-block-refresh');
 
 		// Publish and view the Page on the frontend site.
 		$I->publishAndViewGutenbergPage($I);
