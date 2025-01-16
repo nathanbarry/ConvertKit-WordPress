@@ -53,10 +53,10 @@ abstract class ConvertKit_Settings_Base {
 
 	/**
 	 * Holds the settings sections for a settings screen.
-	 * 
-	 * @since 	2.7.1
-	 * 
-	 * @var 	array
+	 *
+	 * @since   2.7.1
+	 *
+	 * @var     array
 	 */
 	public $settings_sections = array();
 
@@ -88,6 +88,14 @@ abstract class ConvertKit_Settings_Base {
 		if ( empty( $this->tab_text ) ) {
 			$this->tab_text = $this->title;
 		}
+
+		// Define settings sections.
+		$this->settings_sections = array(
+			'general'  => array(
+				'title'    => $this->title,
+				'callback' => array( $this, 'print_section_info' ),
+			),
+		);
 
 		// Register the settings section.
 		$this->register_section();
@@ -139,7 +147,7 @@ abstract class ConvertKit_Settings_Base {
 				$this->settings_key,
 				array(
 					'before_section' => $this->get_render_container_start(),
-					'after_section' => $this->get_render_container_end(),
+					'after_section'  => $this->get_render_container_end(),
 				)
 			);
 		}
@@ -159,7 +167,8 @@ abstract class ConvertKit_Settings_Base {
 	/**
 	 * Register fields for this section
 	 */
-	abstract public function register_fields();
+	public function register_fields() {
+	}
 
 	/**
 	 * Prints help info for this section
@@ -245,7 +254,7 @@ abstract class ConvertKit_Settings_Base {
 	 */
 	public function render_container_start() {
 
-		echo $this->get_render_container_start();
+		echo $this->get_render_container_start(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 	}
 
@@ -257,7 +266,7 @@ abstract class ConvertKit_Settings_Base {
 	 */
 	public function render_container_end() {
 
-		echo $this->get_render_container_end();
+		echo $this->get_render_container_end(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 	}
 

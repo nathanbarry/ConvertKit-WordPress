@@ -34,16 +34,16 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 
 		// Define settings sections.
 		$this->settings_sections = array(
-			'general' => array(
-				'title' => $this->title,
+			'general'  => array(
+				'title'    => $this->title,
 				'callback' => array( $this, 'print_section_info' ),
 			),
 			'products' => array(
-				'title' => __( 'Products', 'convertkit' ),
+				'title'    => __( 'Products', 'convertkit' ),
 				'callback' => array( $this, 'print_section_info_products' ),
 			),
-			'tags' => array(
-				'title' => __( 'Tags', 'convertkit' ),
+			'tags'     => array(
+				'title'    => __( 'Tags', 'convertkit' ),
 				'callback' => array( $this, 'print_section_info_tags' ),
 			),
 		);

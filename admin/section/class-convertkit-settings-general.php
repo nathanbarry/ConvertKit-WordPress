@@ -59,9 +59,13 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 
 		// Define settings sections.
 		$this->settings_sections = array(
-			'general' => array(
-				'title' => $this->title,
+			'general'  => array(
+				'title'    => $this->title,
 				'callback' => array( $this, 'print_section_info' ),
+			),
+			'advanced' => array(
+				'title'    => __( 'Advanced', 'convertkit' ),
+				'callback' => array( $this, 'print_section_info_advanced' ),
 			),
 		);
 
@@ -354,12 +358,13 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 			)
 		);
 
+		// Advanced.
 		add_settings_field(
 			'debug',
 			__( 'Debug', 'convertkit' ),
 			array( $this, 'debug_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-advanced',
 			array(
 				'label_for' => 'debug',
 			)
@@ -370,7 +375,7 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 			__( 'Disable JavaScript', 'convertkit' ),
 			array( $this, 'no_scripts_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-advanced',
 			array(
 				'label_for' => 'no_scripts',
 			)
@@ -381,7 +386,7 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 			__( 'Disable CSS', 'convertkit' ),
 			array( $this, 'no_css_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-advanced',
 			array(
 				'label_for' => 'no_css',
 			)
@@ -395,17 +400,30 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 	public function print_section_info() {
 
 		?>
-		<p><?php esc_html_e( 'Choosing a default form will embed it at the bottom of every post or page (in single view only) across your site.', 'convertkit' ); ?></p>
+		<p><?php esc_html_e( 'Choosing a default form will embed it at the top, bottom or top and bottom of every post or page (in single view only) across your site.', 'convertkit' ); ?></p>
 		<p><?php esc_html_e( 'If you wish to turn off form embedding or select a different form for an individual post or page, you can do so using the Kit meta box on the edit page.', 'convertkit' ); ?></p>
 		<p>
 			<?php
 			printf(
 				/* translators: [convertkit] shortcode, wrapped in <code> tags */
-				esc_html__( 'The default form can be inserted into the middle of post or page content by using the %s shortcode.', 'convertkit' ),
+				esc_html__( 'The default form can be inserted into the middle of post or page content by using either the %s shortcode or block.', 'convertkit' ),
 				'<code>[convertkit]</code>'
 			);
 			?>
 		</p>
+		<?php
+
+	}
+
+	/**
+	 * Prints help info for the advanced section of the settings screen.
+	 *
+	 * @since   2.7.1
+	 */
+	public function print_section_info_advanced() {
+
+		?>
+		<p class="description"><?php esc_html_e( 'Defines advanced configuration settings, usually when working with support or needing to disable JS or CSS.', 'convertkit' ); ?></p>
 		<?php
 
 	}

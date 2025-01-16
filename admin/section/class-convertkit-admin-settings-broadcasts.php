@@ -38,7 +38,7 @@ class ConvertKit_Admin_Settings_Broadcasts extends ConvertKit_Settings_Base {
 		// Define settings sections.
 		$this->settings_sections = array(
 			'general' => array(
-				'title' => $this->title,
+				'title'    => $this->title,
 				'callback' => array( $this, 'print_section_info' ),
 			),
 		);
