@@ -52,6 +52,15 @@ abstract class ConvertKit_Settings_Base {
 	public $settings;
 
 	/**
+	 * Holds the settings sections for a settings screen.
+	 * 
+	 * @since 	2.7.1
+	 * 
+	 * @var 	array
+	 */
+	public $settings_sections = array();
+
+	/**
 	 * Holds whether this settings section is for beta functionality.
 	 *
 	 * @since   2.1.0
@@ -121,15 +130,24 @@ abstract class ConvertKit_Settings_Base {
 	 */
 	public function register_section() {
 
-		add_settings_section(
-			$this->name,
-			$this->title,
-			array( $this, 'print_section_info' ),
-			$this->settings_key
-		);
+		// Register settings sections.
+		foreach ( $this->settings_sections as $name => $settings_section ) {
+			add_settings_section(
+				( $name === 'general' ? $this->name : $this->name . '-' . $name ),
+				$settings_section['title'],
+				$settings_section['callback'],
+				$this->settings_key,
+				array(
+					'before_section' => $this->get_render_container_start(),
+					'after_section' => $this->get_render_container_end(),
+				)
+			);
+		}
 
+		// Register settings fields.
 		$this->register_fields();
 
+		// Register setting to store data in options table.
 		register_setting(
 			$this->settings_key,
 			$this->settings_key,
@@ -202,8 +220,6 @@ abstract class ConvertKit_Settings_Base {
 		 */
 		do_action( 'convertkit_settings_base_render_before' );
 
-		$this->render_container_start();
-
 		do_settings_sections( $this->settings_key );
 
 		settings_fields( $this->settings_key );
@@ -211,8 +227,6 @@ abstract class ConvertKit_Settings_Base {
 		if ( ! $this->save_disabled ) {
 			submit_button();
 		}
-
-		$this->render_container_end();
 
 		/**
 		 *  Performs actions after rendering of the settings form.
@@ -224,17 +238,14 @@ abstract class ConvertKit_Settings_Base {
 	}
 
 	/**
-	 * Outputs .metabox-holder and .postbox container div elements,
+	 * Outputs opening .metabox-holder and .postbox container div elements,
 	 * used before beginning a setting screen's output.
 	 *
 	 * @since   2.0.0
 	 */
 	public function render_container_start() {
 
-		?>
-		<div class="metabox-holder">
-			<div class="postbox <?php echo sanitize_html_class( $this->is_beta ? 'convertkit-beta' : '' ); ?>">
-		<?php
+		echo $this->get_render_container_start();
 
 	}
 
@@ -246,10 +257,31 @@ abstract class ConvertKit_Settings_Base {
 	 */
 	public function render_container_end() {
 
-		?>
-			</div>
-		</div>
-		<?php
+		echo $this->get_render_container_end();
+
+	}
+
+	/**
+	 * Returns opening .metabox-holder and .postbox container div elements,
+	 * used before beginning a section of a settings screen output.
+	 *
+	 * @since   2.7.1
+	 */
+	public function get_render_container_start() {
+
+		return '<div class="metabox-holder"><div class="postbox ' . sanitize_html_class( $this->is_beta ? 'convertkit-beta' : '' ) . '">';
+
+	}
+
+	/**
+	 * Returns closing .metabox-holder and .postbox container div elements,
+	 * used after finishing a section of a settings screen output.
+	 *
+	 * @since   2.7.1
+	 */
+	public function get_render_container_end() {
+
+		return '</div></div>';
 
 	}
 

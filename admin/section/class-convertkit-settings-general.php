@@ -57,6 +57,14 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 		$this->title    = __( 'General Settings', 'convertkit' );
 		$this->tab_text = __( 'General', 'convertkit' );
 
+		// Define settings sections.
+		$this->settings_sections = array(
+			'general' => array(
+				'title' => $this->title,
+				'callback' => array( $this, 'print_section_info' ),
+			),
+		);
+
 		// Register and maybe output notices for this settings screen.
 		if ( $this->on_settings_screen( $this->name ) ) {
 			add_filter( 'convertkit_settings_base_register_notices', array( $this, 'register_notices' ) );
