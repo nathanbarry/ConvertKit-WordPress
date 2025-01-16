@@ -105,17 +105,6 @@ class ConvertKit_Settings_OAuth extends ConvertKit_Settings_Base {
 	}
 
 	/**
-	 * Register fields for this section
-	 *
-	 * @since   2.2.0
-	 */
-	public function register_fields() {
-
-		// No fields are registered for the Debug Log.
-		// This function is deliberately blank.
-	}
-
-	/**
 	 * Outputs the OAuth screen.
 	 *
 	 * @since   2.2.0

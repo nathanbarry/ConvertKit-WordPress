@@ -32,6 +32,25 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 		$this->title    = __( 'Member Content', 'convertkit' );
 		$this->tab_text = __( 'Member Content', 'convertkit' );
 
+		// Define settings sections.
+		$this->settings_sections = array(
+			'general'  => array(
+				'title'    => $this->title,
+				'callback' => array( $this, 'print_section_info' ),
+				'wrap'     => true,
+			),
+			'products' => array(
+				'title'    => __( 'Products', 'convertkit' ),
+				'callback' => array( $this, 'print_section_info_products' ),
+				'wrap'     => true,
+			),
+			'tags'     => array(
+				'title'    => __( 'Tags', 'convertkit' ),
+				'callback' => array( $this, 'print_section_info_tags' ),
+				'wrap'     => true,
+			),
+		);
+
 		// Enqueue scripts.
 		add_action( 'convertkit_admin_settings_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
@@ -86,12 +105,12 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'reCAPTCHA: Site Key', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-tags',
 			array(
 				'name'        => 'recaptcha_site_key',
 				'label_for'   => 'recaptcha_site_key',
 				'description' => array(
-					__( 'Enter your Google reCAPTCHA v3 Site Key. When specified, this will be used in Member Content by Tag functionality to reduce spam signups.', 'convertkit' ),
+					__( 'Enter your Google reCAPTCHA v3 Site Key. When specified, this will be used to reduce spam signups.', 'convertkit' ),
 				),
 			)
 		);
@@ -100,12 +119,12 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'reCAPTCHA: Secret Key', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-tags',
 			array(
 				'name'        => 'recaptcha_secret_key',
 				'label_for'   => 'recaptcha_secret_key',
 				'description' => array(
-					__( 'Enter your Google reCAPTCHA v3 Secret Key. When specified, this will be used in Member Content by Tag functionality to reduce spam signups.', 'convertkit' ),
+					__( 'Enter your Google reCAPTCHA v3 Secret Key. When specified, this will be used to reduce spam signups.', 'convertkit' ),
 				),
 			)
 		);
@@ -114,7 +133,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'reCAPTCHA: Minimum Score', 'convertkit' ),
 			array( $this, 'number_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-tags',
 			array(
 				'name'        => 'recaptcha_minimum_score',
 				'label_for'   => 'recaptcha_minimum_score',
@@ -127,64 +146,33 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			)
 		);
 
-		// Restrict by Product.
-		add_settings_field(
-			'subscribe_heading',
-			__( 'Product: Subscribe Heading', 'convertkit' ),
-			array( $this, 'text_callback' ),
-			$this->settings_key,
-			$this->name,
-			array(
-				'name'        => 'subscribe_heading',
-				'label_for'   => 'subscribe_heading',
-				'description' => array(
-					__( 'When a Page, Post or Custom Post\'s Member Content setting is set to a Kit Product, displays text in a heading explaining why the content is only available to subscribers.', 'convertkit' ),
-				),
-			)
-		);
-
-		add_settings_field(
-			'subscribe_text',
-			__( 'Product: Subscribe Text', 'convertkit' ),
-			array( $this, 'textarea_callback' ),
-			$this->settings_key,
-			$this->name,
-			array(
-				'name'        => 'subscribe_text',
-				'label_for'   => 'subscribe_text',
-				'description' => array(
-					__( 'When a Page, Post or Custom Post\'s Member Content setting is set to a Kit Product, displays text explaining why the content is only available to subscribers.', 'convertkit' ),
-				),
-			)
-		);
-
 		// Restrict by Tag.
 		add_settings_field(
 			'subscribe_heading_tag',
-			__( 'Tag: Subscribe Heading', 'convertkit' ),
+			__( 'Subscribe Heading', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-tags',
 			array(
 				'name'        => 'subscribe_heading_tag',
 				'label_for'   => 'subscribe_heading_tag',
 				'description' => array(
-					__( 'When a Page, Post or Custom Post\'s Member Content setting is set to a Kit Tag, displays text in a heading explaining why the content is only available to subscribers.', 'convertkit' ),
+					__( 'Displays text in a heading explaining why the content is only available to subscribers.', 'convertkit' ),
 				),
 			)
 		);
 
 		add_settings_field(
 			'subscribe_text_tag',
-			__( 'Tag: Subscribe Text', 'convertkit' ),
+			__( 'Subscribe Text', 'convertkit' ),
 			array( $this, 'textarea_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-tags',
 			array(
 				'name'        => 'subscribe_text_tag',
 				'label_for'   => 'subscribe_text_tag',
 				'description' => array(
-					__( 'When a Page, Post or Custom Post\'s Member Content setting is set to a Kit Tag, displays text explaining why the content is only available to subscribers.', 'convertkit' ),
+					__( 'Displays text explaining why the content is only available to subscribers.', 'convertkit' ),
 				),
 			)
 		);
@@ -205,12 +193,43 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			)
 		);
 
+		// Restrict by Product.
+		add_settings_field(
+			'subscribe_heading',
+			__( 'Subscribe Heading', 'convertkit' ),
+			array( $this, 'text_callback' ),
+			$this->settings_key,
+			$this->name . '-products',
+			array(
+				'name'        => 'subscribe_heading',
+				'label_for'   => 'subscribe_heading',
+				'description' => array(
+					__( 'Displays text in a heading explaining why the content is only available to subscribers.', 'convertkit' ),
+				),
+			)
+		);
+
+		add_settings_field(
+			'subscribe_text',
+			__( 'Subscribe Text', 'convertkit' ),
+			array( $this, 'textarea_callback' ),
+			$this->settings_key,
+			$this->name . '-products',
+			array(
+				'name'        => 'subscribe_text',
+				'label_for'   => 'subscribe_text',
+				'description' => array(
+					__( 'Displays text explaining why the content is only available to subscribers.', 'convertkit' ),
+				),
+			)
+		);
+
 		add_settings_field(
 			'email_text',
 			__( 'Email Text', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_text',
 				'label_for'   => 'email_text',
@@ -225,7 +244,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Heading', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_heading',
 				'label_for'   => 'email_heading',
@@ -240,7 +259,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Field Description', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_description_text',
 				'label_for'   => 'email_description_text',
@@ -255,7 +274,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Button Label', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_button_label',
 				'label_for'   => 'email_button_label',
@@ -270,7 +289,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Check Heading', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_check_heading',
 				'label_for'   => 'email_check_heading',
@@ -285,7 +304,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Check Text', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_check_text',
 				'label_for'   => 'email_check_text',
@@ -300,7 +319,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'No Access Text', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'no_access_text',
 				'label_for'   => 'no_access_text',
@@ -325,6 +344,31 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 
 	}
 
+	/**
+	 * Prints help info for the products section of the settings screen.
+	 *
+	 * @since   2.7.1
+	 */
+	public function print_section_info_products() {
+
+		?>
+		<p class="description"><?php esc_html_e( 'Defines settings when a Page, Post or Custom Post type has its member content setting set to a Kit product.', 'convertkit' ); ?></p>
+		<?php
+
+	}
+
+	/**
+	 * Prints help info for the tags section of the settings screen.
+	 *
+	 * @since   2.7.1
+	 */
+	public function print_section_info_tags() {
+
+		?>
+		<p class="description"><?php esc_html_e( 'Defines settings when a Page, Post or Custom Post type has its member content setting set to a Kit tag.', 'convertkit' ); ?></p>
+		<?php
+
+	}
 
 	/**
 	 * Returns the URL for the ConvertKit documentation for this setting section.

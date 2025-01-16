@@ -285,15 +285,6 @@ class ConvertKit_Settings_Tools extends ConvertKit_Settings_Base {
 	}
 
 	/**
-	 * Register fields for this section
-	 */
-	public function register_fields() {
-
-		// No fields are registered for the Debug Log.
-		// This function is deliberately blank.
-	}
-
-	/**
 	 * Outputs the Debug Log and System Info view.
 	 *
 	 * @since   1.9.6

@@ -35,6 +35,15 @@ class ConvertKit_Admin_Settings_Broadcasts extends ConvertKit_Settings_Base {
 		// Identify that this is beta functionality.
 		$this->is_beta = true;
 
+		// Define settings sections.
+		$this->settings_sections = array(
+			'general' => array(
+				'title'    => $this->title,
+				'callback' => array( $this, 'print_section_info' ),
+				'wrap'     => true,
+			),
+		);
+
 		// Register and maybe output notices for this settings screen.
 		if ( $this->on_settings_screen( $this->name ) ) {
 			add_filter( 'convertkit_settings_base_register_notices', array( $this, 'register_notices' ) );
