@@ -177,6 +177,22 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			)
 		);
 
+		// All.
+		add_settings_field(
+			'subscribe_button_label',
+			__( 'Subscribe Button Label', 'convertkit' ),
+			array( $this, 'text_callback' ),
+			$this->settings_key,
+			$this->name,
+			array(
+				'name'        => 'subscribe_button_label',
+				'label_for'   => 'subscribe_button_label',
+				'description' => array(
+					__( 'The text to display for the call to action button to subscribe.', 'convertkit' ),
+				),
+			)
+		);
+
 		// Restrict by Product.
 		add_settings_field(
 			'subscribe_heading',
@@ -208,28 +224,12 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			)
 		);
 
-		// All.
-		add_settings_field(
-			'subscribe_button_label',
-			__( 'Subscribe Button Label', 'convertkit' ),
-			array( $this, 'text_callback' ),
-			$this->settings_key,
-			$this->name,
-			array(
-				'name'        => 'subscribe_button_label',
-				'label_for'   => 'subscribe_button_label',
-				'description' => array(
-					__( 'The text to display for the call to action button to subscribe.', 'convertkit' ),
-				),
-			)
-		);
-
 		add_settings_field(
 			'email_text',
 			__( 'Email Text', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_text',
 				'label_for'   => 'email_text',
@@ -244,7 +244,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Heading', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_heading',
 				'label_for'   => 'email_heading',
@@ -259,7 +259,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Field Description', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_description_text',
 				'label_for'   => 'email_description_text',
@@ -274,7 +274,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Button Label', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_button_label',
 				'label_for'   => 'email_button_label',
@@ -289,7 +289,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Check Heading', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_check_heading',
 				'label_for'   => 'email_check_heading',
@@ -304,7 +304,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'Email Check Text', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'email_check_text',
 				'label_for'   => 'email_check_text',
@@ -319,7 +319,7 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			__( 'No Access Text', 'convertkit' ),
 			array( $this, 'text_callback' ),
 			$this->settings_key,
-			$this->name,
+			$this->name . '-products',
 			array(
 				'name'        => 'no_access_text',
 				'label_for'   => 'no_access_text',
