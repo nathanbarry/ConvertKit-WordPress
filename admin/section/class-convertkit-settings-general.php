@@ -62,10 +62,12 @@ class ConvertKit_Settings_General extends ConvertKit_Settings_Base {
 			'general'  => array(
 				'title'    => $this->title,
 				'callback' => array( $this, 'print_section_info' ),
+				'wrap'	   => true,
 			),
 			'advanced' => array(
 				'title'    => __( 'Advanced', 'convertkit' ),
 				'callback' => array( $this, 'print_section_info_advanced' ),
+				'wrap'	   => true,
 			),
 		);
 

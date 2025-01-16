@@ -89,14 +89,6 @@ abstract class ConvertKit_Settings_Base {
 			$this->tab_text = $this->title;
 		}
 
-		// Define settings sections.
-		$this->settings_sections = array(
-			'general'  => array(
-				'title'    => $this->title,
-				'callback' => array( $this, 'print_section_info' ),
-			),
-		);
-
 		// Register the settings section.
 		$this->register_section();
 
@@ -140,15 +132,21 @@ abstract class ConvertKit_Settings_Base {
 
 		// Register settings sections.
 		foreach ( $this->settings_sections as $name => $settings_section ) {
+			// Determine if this settings section needs to be wrapped in its own container.
+			$wrap = array();
+			if ( $settings_section['wrap'] ) {
+				$wrap = array(
+					'before_section' => $this->get_render_container_start(),
+					'after_section'  => $this->get_render_container_end(),
+				);
+			}
+
 			add_settings_section(
 				( $name === 'general' ? $this->name : $this->name . '-' . $name ),
 				$settings_section['title'],
 				$settings_section['callback'],
 				$this->settings_key,
-				array(
-					'before_section' => $this->get_render_container_start(),
-					'after_section'  => $this->get_render_container_end(),
-				)
+				$wrap
 			);
 		}
 
@@ -238,7 +236,7 @@ abstract class ConvertKit_Settings_Base {
 		}
 
 		/**
-		 *  Performs actions after rendering of the settings form.
+		 * Performs actions after rendering of the settings form.
 		 *
 		 * @since   1.9.6
 		 */
