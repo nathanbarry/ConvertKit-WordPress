@@ -37,17 +37,17 @@ class ConvertKit_Admin_Settings_Restrict_Content extends ConvertKit_Settings_Bas
 			'general'  => array(
 				'title'    => $this->title,
 				'callback' => array( $this, 'print_section_info' ),
-				'wrap'	   => true,
+				'wrap'     => true,
 			),
 			'products' => array(
 				'title'    => __( 'Products', 'convertkit' ),
 				'callback' => array( $this, 'print_section_info_products' ),
-				'wrap'	   => true,
+				'wrap'     => true,
 			),
 			'tags'     => array(
 				'title'    => __( 'Tags', 'convertkit' ),
 				'callback' => array( $this, 'print_section_info_tags' ),
-				'wrap'	   => true,
+				'wrap'     => true,
 			),
 		);
 

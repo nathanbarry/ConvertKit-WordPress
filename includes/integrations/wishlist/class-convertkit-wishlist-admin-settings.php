@@ -32,20 +32,17 @@ class ConvertKit_Wishlist_Admin_Settings extends ConvertKit_Settings_Base {
 		$this->title    = __( 'WishList Member Integration Settings', 'convertkit' );
 		$this->tab_text = __( 'WishList Member', 'convertkit' );
 
+		// Define settings sections.
+		$this->settings_sections = array(
+			'general' => array(
+				'title'    => $this->title,
+				'callback' => array( $this, 'print_section_info' ),
+				'wrap'     => false,
+			),
+		);
+
 		parent::__construct();
 
-	}
-
-	/**
-	 * Register fields for this section.
-	 *
-	 * @since   1.9.6
-	 */
-	public function register_fields() {
-
-		// No fields are registered, because they are output in a WP_List_Table
-		// in this class' render() function.
-		// This function is deliberately blank.
 	}
 
 	/**
@@ -155,11 +152,11 @@ class ConvertKit_Wishlist_Admin_Settings extends ConvertKit_Settings_Base {
 		// Register settings field.
 		settings_fields( $this->settings_key );
 
-		// Render submit button.
-		submit_button();
-
 		// Render closing container.
 		$this->render_container_end();
+
+		// Render submit button.
+		submit_button();
 
 	}
 

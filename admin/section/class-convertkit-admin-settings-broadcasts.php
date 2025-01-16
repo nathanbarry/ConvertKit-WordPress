@@ -40,7 +40,7 @@ class ConvertKit_Admin_Settings_Broadcasts extends ConvertKit_Settings_Base {
 			'general' => array(
 				'title'    => $this->title,
 				'callback' => array( $this, 'print_section_info' ),
-				'wrap'	   => true,
+				'wrap'     => true,
 			),
 		);
 

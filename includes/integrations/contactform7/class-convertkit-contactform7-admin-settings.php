@@ -30,6 +30,15 @@ class ConvertKit_ContactForm7_Admin_Settings extends ConvertKit_Settings_Base {
 		$this->title    = __( 'Contact Form 7 Integration Settings', 'convertkit' );
 		$this->tab_text = __( 'Contact Form 7', 'convertkit' );
 
+		// Define settings sections.
+		$this->settings_sections = array(
+			'general' => array(
+				'title'    => $this->title,
+				'callback' => array( $this, 'print_section_info' ),
+				'wrap'     => false,
+			),
+		);
+
 		parent::__construct();
 
 	}
@@ -177,11 +186,11 @@ class ConvertKit_ContactForm7_Admin_Settings extends ConvertKit_Settings_Base {
 		// Register settings field.
 		settings_fields( $this->settings_key );
 
-		// Render submit button.
-		submit_button();
-
 		// Render closing container.
 		$this->render_container_end();
+
+		// Render submit button.
+		submit_button();
 
 	}
 
